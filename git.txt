@@ -217,7 +217,9 @@
 				$ git push -u origin master
 
 
-
+			b). 如果在github上修改了文件如何提取更新到本地
+				git fetch origin
+				git merge origin/master
 
 
 
