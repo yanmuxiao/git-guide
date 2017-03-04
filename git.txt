@@ -18,7 +18,13 @@
 
 	因为Git是分布式版本控制系统，所以需要填写用户名和邮箱作为一个标识。
 
-	注意：git config  –global 参数，有了这个参数，表示你这台机器上所有的Git仓库都会使用这个配置，当然你也可以对某个仓库指定的不同的用户名和邮箱。
+	注意：git config  --global 参数，有了这个参数，表示你这台机器上所有的Git仓库都会使用这个配置，当然你也可以对某个仓库指定的不同的用户名和邮箱。
+
+
+	获取Git配置信息:
+
+	git config --list
+
 
 
 
@@ -31,10 +37,14 @@
 	$ pwd ==>显示当前目录的路径
 
 
-	$ git init ==>这个目录变成git可以管理的仓库（生成一个隐藏的.git目录）
+	$ git init ==>这个目录变成git可以管理的仓库
+				（生成一个隐藏的.git目录，ls -ah命令可以看到）
 
 	1、git init 把这个目录变成git可以管理的仓库	
 		1).  在仓库目录下新建一个readme.txt文件
+
+			==> touch readme.txt
+
 			==> 使用node fs模块建：
 				node ==>进入终端
 				var fs = require('fs');
@@ -46,6 +56,10 @@
 		1).  git add readme.txt  ==> 将新建readme.txt文件添加到暂存区里面去
 		2).  git commit   ==>   把文件提交到Git仓库
 			 git commit -m '本次提交的注释' 
+
+			 如何将第1)、第2)不一步执行？
+			 	git commit -am '本次提交的注释'
+			 	==>前提是仓库中已经存在该文件，提交不了新文件
 
 		3).  git status ==>查看是否还有文件未提交
 			 	修改提示
@@ -128,15 +142,16 @@
 
 	2. 删除文件
 		1)、尚未commit, 即版本库中没有该文件
-		   a). 文件夹中直接删除
-		   b). git命令删除：git rm deleteFile.txt
+		   a). git命令删除：git rm deleteFile.txt
+		   b). 文件夹中直接删除
 
 		2)、已经提交到版本库了
-		   a) git rm deleteFile.txt
+		   a)   
+		   		aa). git rm deleteFile.txt
 
-		   	  	aa). git commit -m '因为什么，删除了该文件'
+		   	 	bb). git commit -m '因为什么，删除了该文件'
 
-		   	  	bb). 突然间我不想删除该文件了，咋办？
+		   	  	cc). 突然间我不想删除该文件了，咋办？
 
 		   	  		 aaa). git checkout -- deleteFile.txt
 
@@ -146,6 +161,58 @@
 
 		   	  		 注意：整个文件夹的版本回退（感觉该办法慎用！！！），可用于尚未修改别的文件   
 
+
+
+
+
+五、远程库
+
+	在了解之前，先注册github账号，由于你的本地Git仓库和github仓库之间的传输是通过SSH加密的，所以需要一点设置：
+
+    1. 第一步：创建SSH Key。
+     	1). 在用户主目录下，看看有没有.ssh目录，如果有，再看看这个
+     	目录下有没有id_rsa和id_rsa.pub这两个文件，如果有的话，直接跳过此如下命令；
+     	2). 如果没有的话，在这个文件夹下打开命令行，输入如下命令：
+
+	 	ssh-keygen  -t rsa –C "youremail@example.com"
+
+	 	然后该文件夹先生成两个文件：
+	 		id_rsa是私钥，不能泄露出去
+	 		id_rsa.pub是公钥，可以放心地告诉任何人。
+
+	   第二步：
+	 	1). 登录github,打开"settings"中的SSH Keys页面
+	 	2). 点击"Add SSH Key",填上任意title，在Key文本框里黏贴id_rsa.pub文件的内容。
+
+
+	 2. 如何添加远程库？
+	 	1). 首先，登录github上，然后在右上角找到"create a new repo"创建一个新的仓库，仓库名：git-test
+
+	 	2). 项目创建完后会生成一个项目地址：
+	 		https://github.com/yanmuxiao/git-guide.git
+
+	 	3). 如何将远程库和本地的库关联起来
+	 		a). 在存放该项目的目录下建一个和远程库同名的项目目录：
+
+	 			$ mkdir runoob-git-test    # 创建测试目录
+				$ cd runoob-git-test      # 进入测试目录
+				$ echo "# 菜鸟教程 Git 测试" >> README.md     							# 创建 README.md 文件并写入内容
+
+				$ ls            # 查看目录下的文件
+					README
+				$ git init      # 初始化
+				$ git add README.md         # 添加文件
+				$ git commit -m "添加 README.md 文件"        
+								# 提交并备注信息
+					[master (root-commit) 0205aab] 添加 README.md 文件
+ 					1 file changed, 1 insertion(+)
+ 					create mode 100644 README.md
+
+
+
+				# 提交到 Github
+				$ git remote add origin git@github.com:tianqixin/runoob-git-test.git     #用到2)中的项目地址
+				$ git push -u origin master
 
 
 
