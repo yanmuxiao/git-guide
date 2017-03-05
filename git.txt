@@ -287,6 +287,7 @@
 
 
 六、创建与合并分支
+
 	在版本回填退里，你已经知道，每次提交，Git都把它们串成一条时间线，这条时间线就是一个分支。截止到目前，只有一条时间线，在Git里，这个分支叫主分支，即master分支。HEAD严格来说不是指向提交，而是指向master，master才是指向提交的，所以，HEAD指向的就是当前分支。
 
 	查看分支：git branch
@@ -304,10 +305,128 @@
 
 
 
+	1. 分支合并冲突（merge conflict):
+
+		新建并跳转到dev分支上(dev): 
+			git checkout -b dev
+		      	==>love.txt文件在dev分支上增加内容: 111111
+		     git commit -am 'love.txt文件在dev分支上增加内容: 111111'
+		     	==>必须将修改后的文件提交到local stage, 否则master主分
+		     	支上的内容也会改变
+
+		切换到master主分支上(master): 
+			git checkout master
+				==>love.txt文件在master分支上增加内容: 222222
+			git commit -am 'love.txt文件在master分支上增加内容: 222222'
+				==>必须将修改后的文件提交到local stage, 否则master主分
+		     	支上的内容也会改变
+
+		将dev分支merge到master分支上:
+			git merge dev
+			Auto-merging love.txt
+			CONFLICT (content): Merge conflict in love.txt
+			Automatic merge failed; fix conflicts and then commit the result.
+
+
+		Merge conflict后master分支上的内容发生了改变(master|MERGING): 
+
+			merge conflict部分为：
+				<<<<<<< HEAD
+				222222222
+				=======
+				111111111
+				>>>>>>> fz1
+
+			Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容，其中<<<HEAD是指主分支修改的内容，>>>>>dev 是指dev上修改的内容
+
+
+		之后可以在master主分支上修改内容，最后提交修改后的内容到主分支的
+		love.txt文件上，dev分支上的love.txt内容不变。
+			git commit -am 'conflick fixed'
+
+
+		可以通过 git log 查看分支合并情况
+
+
+	2. 分支管理策略
+
+		通常合并分支时，git一般使用”Fast forward”模式，在这种模式下，删除分支后，会丢掉分支信息，现在我们来使用带参数 –no-ff来禁用”Fast forward”模式。
+
+
+		1). 创建一个dev分支。
+		2). 修改branch.txt内容。
+		3). 添加到local stage。
+		4). 切换回主分支(master)。
+		5). 合并dev分支，使用命令 git merge –no-ff  -m “注释” dev
+		6). 查看历史记录
+
+
+		git checkout -b dev
+			==> 'add merge'
+		git commit -am 'add merge'
+
+		git checkout master
+		git merge --on-ff -m 'merge with no-ff' dev
+		    ==>在master上合并dev with on-ff
+
+		git branch -d dev
+			==>Deleted branch dev (was 458628d).
+			==>删除分支的版本号: 458628d
+
+		git log --graph --pretty=oneline --abbrev-commit
+
+		 ==>可以看到被删除的dev分支信息还在: 458628d add merge
 
 
 
+		 分支策略：首先master主分支应该是非常稳定的，也就是用来发布新版本，一般情况下不允许在上面干活，干活一般情况下在新建的dev分支上干活，干完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
 
+	3. bug分支
+
+			场景：
+			bug01 ==> 修复需要2天时间，现在已经进行了5个小时
+			bug02 ==> 修复需要5个小时，该bug02很重要，必须先
+					停止修改bug01，先修复完bug02发布后再修改
+					bug01。
+
+		git checkout -b bug01 ==>创建bug01分支修复bug01
+			==> 创建bug01分支，并且已经进行了5个小时
+
+		git stash ==> 在先不提交到local stage的前提下隐藏
+					当前工作现场
+
+		git checkout master ==> 回到主分支master
+
+		git checkout -b bug02
+			==> 创建bug02分支，修复bug02
+
+		git commit -am '5个小时后已经修复了bug02，并提交'
+
+		git checkout master ==> 回到主分支master
+
+		git merge --on-ff -m '将bug02合并到主分支master' bug02
+
+
+			==> merge的过程如果存在conflict，则先解决conflict
+
+		git commit -m '提交发布bug02'
+
+
+		如何继续回复bug01现场继续修改bug01呢？
+
+		git checkout bug01  ==> 进入bug01分支
+
+		git status ==> 工作区是干净的
+
+		git stash list ==> 已经隐藏了的工作现场列表
+
+		git stash apply ==> 恢复当前工作现场，stash内容并不删除
+
+		git stash drop ==> 删除stash内容
+
+			合并上面两步:
+				git stash pop 
+				==> 恢复的同时把stash内容也删除了
 
 
 
