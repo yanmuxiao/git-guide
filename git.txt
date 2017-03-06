@@ -31,10 +31,12 @@
 
 	$ cd E:   ==>进入哪个盘
 	$ cd dir ==>进入哪个目录
+	$ cd ~/.目录名 ==>快速进入指定目录
 
 	$ mkdir dir ==>新建目录
 	$ cd dir ==>进入新建的目录
 	$ pwd ==>显示当前目录的路径
+
 
 
 	$ git init ==>这个目录变成git可以管理的仓库
@@ -43,7 +45,7 @@
 	1、git init 把这个目录变成git可以管理的仓库	
 		1).  在仓库目录下新建一个readme.txt文件
 
-			echo "hello" >　test.txt  ==> 新建一个文件，内容为"hello"
+			echo "hello" >>　test.txt  ==> 新建一个文件，内容为"hello"
 
 			touch readme.txt    	  ==> 新建一个空文件
 
@@ -81,21 +83,21 @@
 
 
 		4).  修改readme.txt文件内容
-		5).  git diff readme.txt  ==>修改的内容和库中内容的对比，确认无误
+		5).  git diff readme.txt  ==>修改的内容和库中内容的对比，确认无误(提交到暂存库前比较)
 			 	有时候git diff readme.txt不起作用，可以试一下: 
 			 	  a). 运行git命令:  rm -f ./.git/index.lock
 			 	  b). 重启git
-
+			 ==> 通常修改内容如果很多，一屏显示不完，Enter键往下继续对比
 		6).  git add readme.txt   ==> 将修改的内容提交到暂存区里面去
 		7).  git commit -m  '提交本次修改，并加上本次修改的注释'   
 					==>   把修改后的文件提交到Git仓库，并写好注释
 		8).  git log readme.txt  ==> 查看该文件提交注释记录
-			 git log --pretty=oneline ==> 查看最近提交记录，oneline显示查看		的提交注释
+			 git log --pretty=oneline ==> 查看最近提交记录，oneline显示查看的提交注释
 			 git reflog   ==> 查看所有提交注释记录对应的版本号
 		
 	3、版本回退
 		1).  cat readme.txt ==>可以先查看一下文件里面的内容
-		2).  整个文件夹的版本回退（感觉该办法慎用！！！）
+		2).  版本回退（感觉该办法慎用！！！）
 		    a). git reset --hard HEAD^  ==>回退到上一个版本
 				git reset --hard HEAD^^  ==>回退到上2个版本
 				git reset --hard HEAD^^^  ==>回退到上3个版本
@@ -103,7 +105,7 @@
 		      
 
 		    b). git reflog ==>查看版本号的列表
-		        git reset  –hard 版本号 ==> 通过版本号回退到指定版本
+		        git reset  --hard 版本号 ==> 通过版本号回退到指定版本
 
 		3). 那么如何实现单个文件的版本回退呢？
 			git log 文件名
@@ -170,7 +172,7 @@
 	2. 删除文件
 		1)、尚未commit, 即版本库中没有该文件
 		   a). git命令删除: git rm deleteFile.txt
-		   b). 文件夹中直接删除
+		   b). 目录中直接删除
 
 		2)、已经提交到版本库了
 		   a)   
@@ -186,7 +188,7 @@
 		   	  		 bbb). git reflog ==> 查看版本号， 
 		   	  		 	   git reset --hard 版本号 ==>通过回退实现撤销删除
 
-		   	  		 注意: 整个文件夹的版本回退（感觉该办法慎用！！！），可用于尚未修改别的文件   
+		   	  		 注意: 整个目录的版本回退（感觉该办法慎用！！！），可用于尚未修改别的文件   
 
 		说明: 
 		当执行提交操作（git commit）时，暂存区的目录树写到版本
@@ -211,13 +213,15 @@
     1. 第一步: 创建SSH Key。
      	1). 在用户主目录下，看看有没有.ssh目录，如果有，再看看这个
      	目录下有没有id_rsa和id_rsa.pub这两个文件，如果有的话，直接跳过此如下命令；
-     	2). 如果没有的话，在这个文件夹下打开命令行，输入如下命令: 
+     	2). 如果没有的话，在这个目录下打开命令行，输入如下命令: 
 
 	 	ssh-keygen  -t rsa –C "youremail@example.com"
 
-	 	然后该文件夹先生成两个文件: 
+	 	然后该目录先生成两个文件: 
 	 		id_rsa是私钥，不能泄露出去
 	 		id_rsa.pub是公钥，可以放心地告诉任何人。
+
+
 
 	   第二步: 
 	 	1). 登录github,打开"settings"中的SSH Keys页面
@@ -257,6 +261,12 @@
 				#只需要执行remote add origin ~ 一次	
 				
 				$ git push -u origin master
+					==> origin: 远程主机名
+					==> 第一次提交加上: -u , 表示将origin设置为默认主机，以后的提交可以不写: -u
+					==> master: 主分支
+
+				如何添加分支到remote stage，例如: dev分支？
+					git push origin 分支名(dev)
 
 
 			b). 如果在github上修改了文件如何提取更新到本地
@@ -267,9 +277,13 @@
 	3. 将github上的项目clone到本地（默认已经关联）
 	   git clone 项目地址url 新的目录名
 
+	   	默认情况下的clone会把所以分支的内容都clone下来，如何clone某一个分支呢？
+	   		git clone -b 分支名(eg: dev) 项目地址url
 
 
-	4. 如何删除远程库里面的文件夹
+
+	4. 如何删除远程库里面的目录==>其实就是先删除local stage的目录再提交到远程
+
 		git rm -r -n --cached "bin/" 
 
 			==> -n：加上这个参数，执行命令时，是不会删除任何文件，而是展示此命令要删除的文件列表预览。
@@ -428,9 +442,6 @@
 				git stash pop 
 				==> 恢复的同时把stash内容也删除了
 
-
-
-		这是在Bright的电脑上修改的内容
 
 
 
