@@ -21,7 +21,11 @@
 
 	git config --global core.longpaths true
 
-	==>解决node_modules文件过长的问题
+	==>解决node_modules目录过长的问题
+
+	git config --global http.postBuffer 524288000
+
+	==>解决文件过大的问题
 
 	注意: git config  --global 参数，有了这个参数，表示你这台机器上所有的Git仓库都会使用这个配置，当然你也可以对某个仓库指定的不同的用户名和邮箱。
 
