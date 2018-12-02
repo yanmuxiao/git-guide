@@ -1,4 +1,4 @@
-﻿一: Git是什么？1111
+﻿一: Git是什么？
 
     Git是目前世界上最先进的分布式版本控制系统。
 
@@ -281,8 +281,14 @@
 
 
 			b). 如果在github上修改了文件如何提取更新到本地
-				git fetch origin
+				git fetch origin master
+				git log -p master..origin/master // 对比修改的内容
 				git merge origin/master
+
+				或：
+				git fetch origin master:tmp
+				git diff tmp 
+				git merge tmp
 
 
 	3. 将github上的项目clone到本地（默认已经关联）
