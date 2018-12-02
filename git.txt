@@ -289,7 +289,7 @@
 	   git clone 项目地址url 新的目录名
 
 	   	默认情况下的clone会把所以分支的内容都clone下来，如何clone某一个分支呢？
-	   		git clone -b 分支名(eg: dev) 项目地址url
+	   		git clone -b 分支名(eg: dev) 项目地址url 新的目录名
 
 
 
